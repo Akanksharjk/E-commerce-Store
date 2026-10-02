@@ -1,8 +1,11 @@
+import userModel from "../models/User.model.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 export const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body
 
-        const userExists = await User.findOne({ email })
+        const userExists = await userModel.findOne({ email })
         if (userExists) {
             return res.status(400).json({
                 message: 'User already exists'
@@ -10,7 +13,7 @@ export const registerUser = async (req, res) => {
         }
         const salt = await bcrypt.genSalt(10)
         const hashedPassword = await bcrypt.hash(password, salt)
-        const user = await User.create({ name, email, password: hashedPassword })
+        const user = await userModel.create({ name, email, password: hashedPassword })
 
         res.status(201).json({
             message: 'User registered successfully',
@@ -31,7 +34,7 @@ export const loginUser = async (req, res) => {
     try {
         let { email, password } = req.body
 
-        let user = await User.findOne({ email })
+        let user = await userModel.findOne({ email })
         if (!user) {
             return res.status(400).json({
                 message: 'Invalid credentials'
