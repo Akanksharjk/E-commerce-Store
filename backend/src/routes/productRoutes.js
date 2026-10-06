@@ -3,8 +3,8 @@ import { getProduct, getProductById, seedProduct } from '../controllers/productC
 
 const router = express.Router()
 
-router.get('/', getProduct)
 router.get('/seed', seedProduct)
+router.get('/', getProduct)
 router.get('/:id', getProductById)
  
 export default router
