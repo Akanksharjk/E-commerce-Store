@@ -5,6 +5,12 @@ export const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body
 
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                message: 'Name, email and password are required'
+            })
+        }
+
         const userExists = await userModel.findOne({ email })
         if (userExists) {
             return res.status(400).json({
@@ -24,6 +30,9 @@ export const registerUser = async (req, res) => {
             }
         })
     } catch (error) {
+
+        console.error('Register Error', error.message)
+
         res.status(500).json({
             message: 'Server Error',
             error: error.message
@@ -33,6 +42,12 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
     try {
         let { email, password } = req.body
+
+        if (!emaill || !password) {
+            return res.status(400).json({
+                message: 'Email and password are required'
+            })
+        }
 
         let user = await userModel.findOne({ email })
         if (!user) {
@@ -46,12 +61,12 @@ export const loginUser = async (req, res) => {
                 message: 'Invalid credentials'
             })
         }
-        let token = jwt.sing(
+        let token = jwt.sign(
             {
                 id: user._id,
                 email: user.email
             },
-            process.env.jwt_SECRET,
+            process.env.JWT_SECRET,
             { expiresIn: '7d' }
         )
         res.json({
@@ -63,6 +78,9 @@ export const loginUser = async (req, res) => {
             }
         })
     } catch (error) {
+
+        console.error('Login Error:', error.message)
+
         res.status(500).json({
             message: 'Server Error',
             error: error.message
