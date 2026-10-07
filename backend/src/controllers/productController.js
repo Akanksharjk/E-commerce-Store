@@ -3,8 +3,11 @@ import ProductModel from "../models/Product.model.js"
 export const getProduct = async (req, res) => {
     try {
         let product = await ProductModel.find()
+            .sort({ createdAt: -1 })
         res.json(product)
     } catch (error) {
+
+        console.error('Get Products Error:', error.message)
         res.status(500).json({
             message: 'Failed to fetch products',
             error: error.message
@@ -22,6 +25,11 @@ export const getProductById = async (req, res) => {
         }
         res.json(product)
     } catch (error) {
+
+        console.error("Product Detail Error",
+            error.message
+        )
+
         res.status(500).json({
             message: 'Failed to fetch product detail',
             error: error.message
@@ -56,12 +64,13 @@ export const seedProduct = async (req, res) => {
         ]
         await ProductModel.deleteMany({})
         const createProducts = await ProductModel.insertMany(sampleProducts)
-        res.json({
+        res.status(201).json({
             message: 'Products seeded successfully',
             products: createProducts
         })
 
     } catch (error) {
+        console.error('Seed Error:', error.message)
         res.status(500).json({
             message: 'Failed to seed products',
             error: error.message
